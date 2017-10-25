@@ -2,18 +2,9 @@ package rabbitmq
 
 import (
 	"github.com/streadway/amqp"
-	"log"
 	"time"
 	"errors"
 )
-
-// like amqp://guest:guest@localhost:5672
-var mqAddr string
-
-
-func MQInit(addr string) {
-	mqAddr = addr
-}
 
 func Dial(addr string) (*amqp.Connection, error) {
 	conn, err := amqp.Dial(addr)
@@ -48,12 +39,34 @@ func DeclareQueue(ch *amqp.Channel, name string) (*amqp.Queue, error) {
 	return &q, nil
 }
 
+func DeclareExchange(ch *amqp.Channel, exchange, kind string) error {
+	return ch.ExchangeDeclare(
+		exchange,
+		kind,
+		true,
+		false,
+		false,
+		false,
+		nil,
+	)
+}
+
+func QueueBind(ch *amqp.Channel, exchange, queue, key string) error {
+	return ch.QueueBind(
+		queue,
+		key,
+		exchange,
+		false,
+		nil,
+	)
+}
+
 // Receive
-func Consume(ch *amqp.Channel, queue string) (<-chan amqp.Delivery, error) {
+func Consume(ch *amqp.Channel, queue string, autoAck bool) (<-chan amqp.Delivery, error) {
 	d, err := ch.Consume(
 		queue,
 		"",
-		true,
+		autoAck,
 		false,
 		false,
 		false,
@@ -67,10 +80,10 @@ func Consume(ch *amqp.Channel, queue string) (<-chan amqp.Delivery, error) {
 }
 
 // if rpc is false, Delivery in returned list should be ignored.
-func Publish(ch *amqp.Channel, queue string, publishing amqp.Publishing) error {
+func Publish(ch *amqp.Channel, exchange, key string, publishing amqp.Publishing) error {
 	err := ch.Publish(
-		"",
-		queue,
+		exchange,
+		key,
 		false,
 		false,
 		publishing)
@@ -92,7 +105,7 @@ func Rpc(ch *amqp.Channel, queue string, publishing amqp.Publishing) (*amqp.Deli
 		return nil, err
 	}
 
-	d, err := Consume(ch, publishing.ReplyTo)
+	d, err := Consume(ch, publishing.ReplyTo, false)
 	if err != nil {
 		return nil, err
 	}
