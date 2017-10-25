@@ -1,9 +1,9 @@
 # Rabbitmq API Wrapper
-A simple rabbitmq API wrapper.
+A simple rabbitmq API wrapper library.
 
 ## 4 Types
-1. Queue  
-send:  
+### 1. Queue  
+**send:**  
 ```go
 package main
 
@@ -34,7 +34,7 @@ func main() {
 	fmt.Printf("send:%s\n", body)
 }
 ```
-receive:  
+**receive:**  
 ```go
 package main
 
@@ -75,7 +75,7 @@ func main() {
 	}
 }
 ```
-rpc:  
+**rpc:**  
 ```go
 package main
 
@@ -113,8 +113,8 @@ func main() {
 
 
 ```
-2. Director  
-producer:  
+### 2. Director  
+**producer:**  
 ```go
 package main
 
@@ -150,7 +150,7 @@ func main() {
 
 }
 ```
-consumer:
+**consumer:**
 ```go
 package main
 
@@ -192,8 +192,8 @@ func main() {
 	}
 }
 ``` 
-3. PubSub  
-publish:  
+### 3. PubSub  
+**publish:**  
 ```go
 package main
 
@@ -225,7 +225,7 @@ func main() {
 	fmt.Printf("send:%s\n", body)
 }
 ```
-subscribe:
+**subscribe:**
 ```go
 package main
 
@@ -267,8 +267,8 @@ func main() {
 	}
 }
 ```
-4. Topic  
-producer:
+### 4. Topic  
+**producer:**
 ```go
 package main
 
@@ -304,7 +304,7 @@ func main() {
 	}
 }
 ```
-consumer:
+**consumer:**
 ```go
 package main
 
