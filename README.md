@@ -12,7 +12,7 @@ Usage:
   producer: [producer.go](https://github.com/willkk/rabbitmq/blob/master/_examples/direct/producer.go)  
   consumer: [consumer.go](https://github.com/willkk/rabbitmq/blob/master/_examples/direct/consumer.go)  
 3. PubSub  
-Usage:
+Usage:  
   producer: [producer.go](https://github.com/willkk/rabbitmq/blob/master/_examples/pubsub/publish.go)  
   consumer: [consumer.go](https://github.com/willkk/rabbitmq/blob/master/_examples/pubsub/subscribe.go)  
 4. Topic  
