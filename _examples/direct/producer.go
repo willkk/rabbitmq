@@ -7,28 +7,18 @@ import (
 )
 
 func main() {
-	conn, err := Dial("amqp://guest:guest@localhost:5672")
+	d, err := NewDirector("amqp://guest:guest@localhost:5672", "test_route")
 	if err != nil {
-		fmt.Println("dail failed.")
+		fmt.Printf("NewDirector failed. err=%s\n", err)
 		return
 	}
-	ch, err := OpenChannel(conn)
-	if err != nil {
-		fmt.Println("open channel failed.")
-		return
-	}
-	exchange := "test_route"
-	kind := "direct"
-	err = DeclareExchange(ch, exchange, kind)
-	if err != nil {
-		fmt.Println("declare exchange failed.")
-		return
-	}
+	defer d.Ch.Close()
+	defer d.Conn.Close()
 
 	keys := []string{"info", "warn", "error"}
 	for _, key := range keys {
 		body := fmt.Sprintf("hello, test route, key:%s", key)
-		err = Publish(ch, exchange, key, amqp.Publishing{
+		err = d.Publish(key, amqp.Publishing{
 			Type: "plain/text",
 			Body: []byte(body),
 		})

@@ -7,26 +7,14 @@ import (
 )
 
 func main() {
-	conn, err := Dial("amqp://guest:guest@localhost:5672")
+	pb, err := NewPubSub("amqp://guest:guest@localhost:5672", "test_pubsub")
 	if err != nil {
-		fmt.Println("dail failed.")
-		return
-	}
-	ch, err := OpenChannel(conn)
-	if err != nil {
-		fmt.Println("open channel failed.")
-		return
-	}
-	exchange := "test_exchange"
-	kind := "fanout"
-	err = DeclareExchange(ch, exchange, kind)
-	if err != nil {
-		fmt.Println("declare exchange failed.")
+		fmt.Printf("NewPubSub failed. err=%s\n", err)
 		return
 	}
 
-	body := "hello, test queue"
-	err = Publish(ch, exchange, "", amqp.Publishing{
+	body := "hello, test pubsub"
+	err = pb.Publish(amqp.Publishing{
 		Type: "plain/text",
 		Body: []byte(body),
 	})

@@ -94,10 +94,10 @@ func Publish(ch *amqp.Channel, exchange, key string, publishing amqp.Publishing)
 	return nil
 }
 
-func Rpc(ch *amqp.Channel, queue string, publishing amqp.Publishing) (*amqp.Delivery, error) {
+func Rpc(ch *amqp.Channel, key string, publishing amqp.Publishing) (*amqp.Delivery, error) {
 	err := ch.Publish(
 		"",
-		queue,
+		key,
 		false,
 		false,
 		publishing)

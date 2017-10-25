@@ -7,30 +7,23 @@ import (
 )
 
 func main() {
-	conn, err := Dial("amqp://guest:guest@localhost:5672")
+	q, err := NewQueue("amqp://guest:guest@localhost:5672", "")
 	if err != nil {
-		fmt.Printf("dail failed.")
+		fmt.Printf("NewQueue failed. err=%s\n", err)
 		return
 	}
-	ch, err := OpenChannel(conn)
-	if err != nil {
-		fmt.Printf("open channel failed.")
-		return
-	}
+	defer q.Ch.Close()
+	defer q.Conn.Close()
 
-	q, err := DeclareQueue(ch, "")
-	if err != nil {
-		fmt.Println("open channel failed.")
-		return
-	}
-	queue := "test_queue"
+	key := "test_queue"
 	pub := amqp.Publishing{
 		Type: "plain/text",
 		CorrelationId: "0_0_1",
-		ReplyTo: q.Name,
+		ReplyTo: q.Q.Name,
 		Body: []byte("hello"),
 	}
-	del, err := Rpc(ch, queue, pub)
+
+	del, err := q.Rpc(key, pub)
 	if err != nil {
 		fmt.Printf("consume failed. err=%s", err)
 		return

@@ -7,21 +7,9 @@ import (
 )
 
 func main() {
-	conn, err := Dial("amqp://guest:guest@localhost:5672")
+	t, err := NewTopic("amqp://guest:guest@localhost:5672", "test_topic")
 	if err != nil {
-		fmt.Println("dail failed.")
-		return
-	}
-	ch, err := OpenChannel(conn)
-	if err != nil {
-		fmt.Println("open channel failed.")
-		return
-	}
-	exchange := "test_topic"
-	kind := "topic"
-	err = DeclareExchange(ch, exchange, kind)
-	if err != nil {
-		fmt.Println("declare exchange failed.")
+		fmt.Printf("NewTopic failed. err=%s\n", err)
 		return
 	}
 
@@ -29,7 +17,7 @@ func main() {
 	"will.test", "tom", "will.test.dev.pro"}
 	for _, key := range keys {
 		body := fmt.Sprintf("hello, test route, key:%s", key)
-		err = Publish(ch, exchange, key, amqp.Publishing{
+		err = t.Publish(key, amqp.Publishing{
 			Type: "plain/text",
 			Body: []byte(body),
 		})
