@@ -12,6 +12,8 @@ func main() {
 		fmt.Printf("NewPubSub failed. err=%s\n", err)
 		return
 	}
+	defer pb.Conn.Close()
+	defer pb.Ch.Close()
 
 	body := "hello, test pubsub"
 	err = pb.Publish(amqp.Publishing{

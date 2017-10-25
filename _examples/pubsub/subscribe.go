@@ -14,6 +14,8 @@ func main() {
 		fmt.Printf("NewPubSub failed. err=%s\n", err)
 		return
 	}
+	defer pb.Conn.Close()
+	defer pb.Ch.Close()
 
 	del, err := pb.Subscribe(false)
 	for d := range del {
