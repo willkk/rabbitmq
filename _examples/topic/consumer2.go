@@ -12,8 +12,7 @@ func main() {
 		fmt.Printf("NewTopic failed. err=%s\n", err)
 		return
 	}
-	defer t.Conn.Close()
-	defer t.Ch.Close()
+	defer t.Close()
 
 	// If a key matches multiple key patterns, this request is sent only once.
 	// For example, a request with key "will.error.develop", it matches "will.*.*",

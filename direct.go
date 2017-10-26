@@ -10,10 +10,15 @@ type Director struct {
 	Ch *amqp.Channel
 	Exchange string
 	Addr string
+	pool *Pool
 }
 
 func NewDirector(addr, exchange string) (*Director, error) {
-	conn, err := Dial(addr)
+	pool, err := NewPool(addr, 1, 1)
+	if err != nil {
+		return nil, err
+	}
+	conn, err := pool.Conn()
 	if err != nil {
 		return nil, err
 	}
@@ -27,11 +32,16 @@ func NewDirector(addr, exchange string) (*Director, error) {
 		return nil, err
 	}
 
-	return &Director{conn, ch, exchange, addr}, nil
+	return &Director{conn, ch, exchange, addr, pool}, nil
 }
 
 func (d *Director)Publish(key string, publishing amqp.Publishing) error {
 	return Publish(d.Ch, d.Exchange, key, publishing)
+}
+
+func (d *Director)Close() {
+	d.pool.Close()
+	d.Ch.Close()
 }
 
 func (d *Director)Consume(keys []string, autoAck bool)(<-chan amqp.Delivery, error) {

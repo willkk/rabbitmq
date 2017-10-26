@@ -14,8 +14,7 @@ func main() {
 		fmt.Printf("NewQueue failed. err=%s\n", err)
 		return
 	}
-	defer q.Ch.Close()
-	defer q.Conn.Close()
+	defer q.Close()
 
 	del, err := q.Consume(false)
 	for d := range del {

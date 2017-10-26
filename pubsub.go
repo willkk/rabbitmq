@@ -1,16 +1,24 @@
 package rabbitmq
 
-import "github.com/streadway/amqp"
+import (
+	"github.com/streadway/amqp"
+)
 
 type PubSub struct {
 	Conn *amqp.Connection
 	Ch *amqp.Channel
 	Exchange string
 	Addr string
+	pool *Pool
 }
 
 func NewPubSub(addr, exchange string) (*PubSub, error) {
-	conn, err := Dial(addr)
+	pool, err := NewPool(addr, 1, 1)
+	if err != nil {
+		return nil, err
+	}
+
+	conn, err := pool.Conn()
 	if err != nil {
 		return nil, err
 	}
@@ -24,7 +32,12 @@ func NewPubSub(addr, exchange string) (*PubSub, error) {
 		return nil, err
 	}
 
-	return &PubSub{conn, ch, exchange, addr}, nil
+	return &PubSub{conn, ch, exchange, addr, pool}, nil
+}
+
+func (pb *PubSub)Close() {
+	pb.pool.Close()
+	pb.Ch.Close()
 }
 
 func (pb *PubSub)Publish(publishing amqp.Publishing) error {

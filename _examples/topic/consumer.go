@@ -12,8 +12,7 @@ func main() {
 		fmt.Printf("NewTopic failed. err=%s\n", err)
 		return
 	}
-	defer t.Conn.Close()
-	defer t.Ch.Close()
+	defer t.Close()
 
 	keys := []string{"*.info.*"}
 	del, err := t.Consume(keys, false)

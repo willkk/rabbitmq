@@ -10,10 +10,15 @@ type Topic struct {
 	Ch *amqp.Channel
 	Exchange string
 	Addr string
+	pool *Pool
 }
 
 func NewTopic(addr, exchange string) (*Topic, error) {
-	conn, err := Dial(addr)
+	pool, err := NewPool(addr, 1, 1)
+	if err != nil {
+		return nil, err
+	}
+	conn, err := pool.Conn()
 	if err != nil {
 		return nil, err
 	}
@@ -27,11 +32,16 @@ func NewTopic(addr, exchange string) (*Topic, error) {
 		return nil, err
 	}
 
-	return &Topic{conn, ch, exchange, addr}, nil
+	return &Topic{conn, ch, exchange, addr, pool}, nil
 }
 
 func (t *Topic)Publish(key string, publishing amqp.Publishing) error {
 	return Publish(t.Ch, t.Exchange, key, publishing)
+}
+
+func (t *Topic)Close() {
+	t.Ch.Close()
+	t.pool.Close()
 }
 
 func (t *Topic)Consume(keys []string, autoAck bool)(<-chan amqp.Delivery, error) {

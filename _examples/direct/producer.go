@@ -12,8 +12,7 @@ func main() {
 		fmt.Printf("NewDirector failed. err=%s\n", err)
 		return
 	}
-	defer d.Ch.Close()
-	defer d.Conn.Close()
+	defer d.Close()
 
 	keys := []string{"info", "warn", "error"}
 	for _, key := range keys {

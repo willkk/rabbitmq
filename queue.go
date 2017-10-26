@@ -9,10 +9,15 @@ type Queue struct {
 	Ch *amqp.Channel
 	Q  *amqp.Queue
 	Addr string
+	pool *Pool
 }
 
 func NewQueue(addr, name string) (*Queue, error) {
-	conn, err := Dial(addr)
+	pool, err := NewPool(addr, 1, 1)
+	if err != nil {
+		return nil, err
+	}
+	conn, err := pool.Conn()
 	if err != nil {
 		return nil, err
 	}
@@ -26,11 +31,16 @@ func NewQueue(addr, name string) (*Queue, error) {
 		return nil, err
 	}
 
-	return &Queue{conn, ch, q, addr}, nil
+	return &Queue{conn, ch, q, addr, pool}, nil
 }
 
 func (q *Queue)Publish(publishing amqp.Publishing) error {
 	return Publish(q.Ch, "", q.Q.Name, publishing)
+}
+
+func (q *Queue)Close() {
+	q.Ch.Close()
+	q.pool.Close()
 }
 
 func (q *Queue)Reply(key string, publishing amqp.Publishing) error {

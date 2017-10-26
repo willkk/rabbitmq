@@ -12,8 +12,7 @@ func main() {
 		fmt.Printf("NewTopic failed. err=%s\n", err)
 		return
 	}
-	defer t.Conn.Close()
-	defer t.Ch.Close()
+	defer t.Close()
 
 	keys := []string{"will.info.develop", "tom.warn.production", "lucy.error.develop",
 	"will.test", "tom", "will.test.dev.pro"}
