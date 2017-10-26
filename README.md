@@ -1,7 +1,7 @@
-# Rabbitmq API Wrapper
+# RabbitMQ API Wrapper
 A simple rabbitmq API wrapper library. It handles four common MQ types: Queue, Direct, PubSub and Topic.
 
-## 4 Types
+## 4 MQ Types
 ### 1. Queue  
 **send:**  
 ```go
