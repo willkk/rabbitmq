@@ -19,8 +19,7 @@ func main() {
 		fmt.Printf("NewQueue failed. err=%s\n", err)
 		return
 	}
-	defer q.Ch.Close()
-	defer q.Conn.Close()
+	defer q.Close()
 
 	body := "hello, test queue"
 	err = q.Publish(amqp.Publishing{
@@ -52,8 +51,7 @@ func main() {
 		fmt.Printf("NewQueue failed. err=%s\n", err)
 		return
 	}
-	defer q.Ch.Close()
-	defer q.Conn.Close()
+	defer q.Close()
 
 	del, err := q.Consume(false)
 	for d := range del {
@@ -91,8 +89,7 @@ func main() {
 		fmt.Printf("NewQueue failed. err=%s\n", err)
 		return
 	}
-	defer q.Ch.Close()
-	defer q.Conn.Close()
+	defer q.Close()
 
 	key := "test_queue"
 	pub := amqp.Publishing{
@@ -130,8 +127,7 @@ func main() {
 		fmt.Printf("NewDirector failed. err=%s\n", err)
 		return
 	}
-	defer d.Ch.Close()
-	defer d.Conn.Close()
+	defer d.Close()
 
 	keys := []string{"info", "warn", "error"}
 	for _, key := range keys {
@@ -166,8 +162,7 @@ func main() {
 		fmt.Printf("NewDirector failed. err=%s\n", err)
 		return
 	}
-	defer di.Ch.Close()
-	defer di.Conn.Close()
+	defer di.Close()
 
 	keys := []string{"info"}
 	del, err := di.Consume(keys, false)
@@ -209,8 +204,7 @@ func main() {
 		fmt.Printf("NewPubSub failed. err=%s\n", err)
 		return
 	}
-	defer pb.Conn.Close()
-	defer pb.Ch.Close()
+	defer pb.Close()
 
 	body := "hello, test pubsub"
 	err = pb.Publish(amqp.Publishing{
@@ -243,8 +237,7 @@ func main() {
 		fmt.Printf("NewPubSub failed. err=%s\n", err)
 		return
 	}
-	defer pb.Conn.Close()
-	defer pb.Ch.Close()
+	defer pb.Close()
 
 	del, err := pb.Subscribe(false)
 	for d := range del {
@@ -284,8 +277,7 @@ func main() {
 		fmt.Printf("NewTopic failed. err=%s\n", err)
 		return
 	}
-	defer t.Conn.Close()
-	defer t.Ch.Close()
+	defer t.Close()
 
 	keys := []string{"will.info.develop", "tom.warn.production", "lucy.error.develop",
 	"will.test", "tom", "will.test.dev.pro"}
@@ -320,8 +312,7 @@ func main() {
 		fmt.Printf("NewTopic failed. err=%s\n", err)
 		return
 	}
-	defer t.Conn.Close()
-	defer t.Ch.Close()
+	defer t.Close()
 
 	keys := []string{"*.info.*"}
 	del, err := t.Consume(keys, false)
